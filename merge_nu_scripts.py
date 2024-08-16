@@ -65,6 +65,8 @@ class NuModule:
             source_code: str = fp.read()
 
         def _rep(x: re.Match) -> str:
+            if x[3] in GLOBAL_LIBRARIES:
+                return x[0]
             mod: NuModule = modules[abspath(self.filepath, x[3])]
             target: str = f"{mod.name} {mod.orig_name}"
             return f"{x[1]}{x[2]}use {target}"
@@ -74,7 +76,7 @@ class NuModule:
     def find_used_files(self) -> None:
         with open(self.filepath, "r") as fp:
             source_code: str = fp.read()
-        self.uses = [abspath(self.filepath, i[2]) for i in USE_REGEX.findall(source_code)]
+        self.uses = [abspath(self.filepath, i[2]) for i in USE_REGEX.findall(source_code) if i[2] not in GLOBAL_LIBRARIES]
 
 
 def sort_modules(modules: Dict[str, NuModule]) -> List[NuModule]:
