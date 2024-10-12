@@ -1,13 +1,10 @@
-import subprocess
-import json
-from typing import Any, Dict, List, Optional, Tuple
-import dataclasses
-import random
-import base64
+from copy import deepcopy
 from os import path
 from queue import SimpleQueue
-from copy import deepcopy
 from sys import stderr, argv
+from typing import Dict, List, Tuple
+import base64
+import random
 import re
 
 
@@ -20,7 +17,7 @@ def main(main_nu_file: str = "test.nu") -> None:
     modules: Dict[str, NuModule] = {}
 
     # find and load all modules
-    main_module = NuModule(path.abspath(main_nu_file))
+    main_module: NuModule = NuModule(path.abspath(main_nu_file))
     modules[path.abspath(main_nu_file)] = main_module
     load_q: SimpleQueue[str] = SimpleQueue()
     for i in main_module.uses:
@@ -46,7 +43,7 @@ def main(main_nu_file: str = "test.nu") -> None:
 
 
 class NuModule:
-    def __init__(self, filepath: str):
+    def __init__(self, filepath: str) -> None:
         if path.isdir(filepath):
             filepath = path.join(filepath, "mod.nu")
         self.filepath: str = filepath
@@ -102,7 +99,7 @@ def abspath(file_path: str, mod_name: str) -> str:
         path.join(
             path.dirname(file_path),
             # windows compatability (i hope)
-            path.sep.join(f"{path.pardir}/".join(mod_name.split("../")).split("/")),
+            path.sep.join(f"{path.pardir}{path.sep}".join(mod_name.split("../")).split("/")),
         )
     )
 
